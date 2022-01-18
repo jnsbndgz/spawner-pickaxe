@@ -33,7 +33,7 @@ public class GlowEnchant extends Enchantment {
     @Override
     @Deprecated
     public String getName() {
-        return "FM_Glow";
+        return "GlowEnchant";
     }
 
     @Override
