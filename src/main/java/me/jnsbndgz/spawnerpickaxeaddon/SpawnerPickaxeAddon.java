@@ -17,12 +17,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
-import java.util.logging.Level;
 
 public class SpawnerPickaxeAddon extends JavaPlugin implements SlimefunAddon {
 
+    private static SpawnerPickaxeAddon instance;
+
+    public static SpawnerPickaxeAddon getInstance() {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
+        instance = this;
+
         Enchantment glowEnchantment = new GlowEnchant(new NamespacedKey(this, "glow_enchant"), new String[]{});
 
         ItemStack itemGroupItem = new CustomItemStack(Material.NETHERITE_PICKAXE, "&4Spawner Pickaxe Category",
@@ -54,16 +61,7 @@ public class SpawnerPickaxeAddon extends JavaPlugin implements SlimefunAddon {
                 null, null, null
         };
 
-        SpawnerPickaxe spawnerPickaxe;
-
-        if(getServer().getPluginManager().isPluginEnabled("WildStacker")) {
-            getLogger().log(Level.INFO, "WildStacker is enabled!");
-            spawnerPickaxe = new SpawnerPickaxe(itemGroup, spawnerPickaxeSlimefunItem, RecipeType.NULL, recipe, true);
-        } else {
-            getLogger().log(Level.INFO, "WildStacker is not enabled!");
-            spawnerPickaxe = new SpawnerPickaxe(itemGroup, spawnerPickaxeSlimefunItem, RecipeType.NULL, recipe, false);
-        }
-
+        SpawnerPickaxe spawnerPickaxe = new SpawnerPickaxe(itemGroup, spawnerPickaxeSlimefunItem, RecipeType.NULL, recipe);
 
         spawnerPickaxe.register(this);
     }

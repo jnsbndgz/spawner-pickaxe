@@ -1,100 +1,69 @@
 package me.jnsbndgz.spawnerpickaxeaddon.tool;
 
-import com.bgsoftware.wildstacker.api.WildStackerAPI;
+import com.bgsoftware.wildstacker.api.events.SpawnerUnstackEvent;
 import com.bgsoftware.wildstacker.api.objects.StackedSpawner;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-import io.github.thebusybiscuit.slimefun4.core.handlers.ToolUseHandler;
 import me.jnsbndgz.spawnerpickaxeaddon.SpawnerPickaxeAddon;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import me.jnsbndgz.spawnerpickaxeaddon.Util.Util;
+import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.block.CreatureSpawner;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
-
-import java.util.List;
-
-import static org.bukkit.Sound.ENTITY_ITEM_BREAK;
 
 /**
  * Spawner Pickaxe, that can pick up spawners.
  *
  * @author jnsbndgz
  */
-public class SpawnerPickaxe extends SlimefunItem {
+public class SpawnerPickaxe extends SlimefunItem implements Listener {
 
-    public SpawnerPickaxe(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
-                          boolean isWildStackerEnabled) {
+    public SpawnerPickaxe(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(itemGroup, item, recipeType, recipe);
 
-        addItemHandler(new ToolUseHandler() {
-            @Override
-            public void onToolUse(BlockBreakEvent blockBreakEvent, ItemStack itemStack, int i, List<ItemStack> list) {
+        Bukkit.getPluginManager().registerEvents(this, SpawnerPickaxeAddon.getInstance());
+    }
 
-                blockBreakEvent.setCancelled(true);
+    @EventHandler
+    private void onBlockBreak(BlockBreakEvent e) {
 
-                if (!blockBreakEvent.getBlock().getType().name().contains("SPAWNER")) {
-                    blockBreakEvent.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&',
-                            "&7[&5&lSpawner Pickaxe&7] &7This pickaxe only has effect on spawners!"));
-                    return;
-                }
+        Player player = e.getPlayer();
+        Block block = e.getBlock();
+        ItemStack item = player.getInventory().getItemInMainHand();
 
-                Block block = blockBreakEvent.getBlock();
-                Player player = blockBreakEvent.getPlayer();
+        if (!block.getType().name().contains("SPAWNER") && this.isItem(item)) {
+            e.setCancelled(true);
+            Util.sendMessage(player, "&7[&5&lSpawnerPickaxe&7] This pickaxe only breaks spawners!");
+        }
+    }
 
-                if(!isWildStackerEnabled) {
-                    EntityType entityType = ((CreatureSpawner) block.getState()).getSpawnedType();
+    @EventHandler
+    private void onSpawnerBreak(SpawnerUnstackEvent e) {
 
-                    ItemStack spawner = new ItemStack(Material.SPAWNER, 1);
-                    BlockStateMeta blockStateMeta = (BlockStateMeta) spawner.getItemMeta();
-                    CreatureSpawner creatureSpawner = (CreatureSpawner) blockStateMeta.getBlockState();
+        if (!(e.getUnstackSource() instanceof Player)) {
+            return;
+        }
 
-                    creatureSpawner.setSpawnedType(entityType);
-                    blockStateMeta.setBlockState(creatureSpawner);
-                    blockStateMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-                            "&d" + generateSpawnerName(entityType) + " Spawner"));
-                    spawner.setItemMeta(blockStateMeta);
+        Player player = (Player) e.getUnstackSource();
+        StackedSpawner spawner = e.getSpawner();
+        ItemStack pickaxe = player.getInventory().getItemInMainHand();
 
-                    consumeSpawnerPickaxe(player, itemStack);
-                    block.breakNaturally();
-                    block.getWorld().dropItemNaturally(block.getLocation(), spawner);
-                } else {
-                    CreatureSpawner creatureSpawner = (CreatureSpawner) block;
+        if (!this.isItem(pickaxe)) {
+            return;
+        }
 
-                    StackedSpawner stackedSpawner = WildStackerAPI.getStackedSpawner(creatureSpawner);
-
-                    player.sendMessage("you broke a wildSpawner");
-
-                    consumeSpawnerPickaxe(player, itemStack);
-                    stackedSpawner.decreaseStackAmount(stackedSpawner.getStackAmount() - 1, true);
-                    block.getWorld().dropItemNaturally(block.getLocation(), stackedSpawner.getDropItem());
-                }
-            }
-        });
+        consumeSpawnerPickaxe(player, pickaxe);
+        spawner.getWorld().dropItemNaturally(spawner.getLocation(), spawner.getDropItem(1));
     }
 
     private void consumeSpawnerPickaxe(Player player, ItemStack itemStack) {
-        player.getWorld().playSound(player.getLocation(), ENTITY_ITEM_BREAK, 1F, 1F);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1F, 1F);
         player.getInventory().removeItem(itemStack);
-    }
-
-    private String generateSpawnerName(EntityType entityType) {
-        String origin = entityType.getKey().toString().split(":")[1].replace("_", " ");
-        StringBuilder sb = new StringBuilder();
-        String[] parts = origin.split(" ");
-
-        for(String s : parts) {
-            sb.append(s.substring(0, 1).toUpperCase());
-            sb.append(s.substring(1));
-            sb.append(" ");
-        }
-
-        return sb.substring(0, sb.length() - 1);
     }
 }
