@@ -9,6 +9,7 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import me.jnsbndgz.spawnerpickaxeaddon.SpawnerPickaxeAddon;
 import me.jnsbndgz.spawnerpickaxeaddon.Util.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -37,7 +38,7 @@ public class SpawnerPickaxe extends SlimefunItem implements Listener {
         Block block = e.getBlock();
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        if (!block.getType().name().contains("SPAWNER") && this.isItem(item)) {
+        if (!(block.getType() == Material.SPAWNER) && this.isItem(item)) {
             e.setCancelled(true);
             Util.sendMessage(player, "&7[&5&lSpawnerPickaxe&7] This pickaxe only breaks spawners!");
         }
