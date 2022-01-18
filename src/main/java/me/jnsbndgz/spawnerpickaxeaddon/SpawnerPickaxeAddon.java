@@ -17,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
+import java.util.logging.Level;
 
 public class SpawnerPickaxeAddon extends JavaPlugin implements SlimefunAddon {
 
@@ -53,7 +54,17 @@ public class SpawnerPickaxeAddon extends JavaPlugin implements SlimefunAddon {
                 null, null, null
         };
 
-        SpawnerPickaxe spawnerPickaxe = new SpawnerPickaxe(itemGroup, spawnerPickaxeSlimefunItem, RecipeType.NULL, recipe, false);
+        SpawnerPickaxe spawnerPickaxe;
+
+        if(getServer().getPluginManager().isPluginEnabled("WildStacker")) {
+            getLogger().log(Level.INFO, "WildStacker is enabled!");
+            spawnerPickaxe = new SpawnerPickaxe(itemGroup, spawnerPickaxeSlimefunItem, RecipeType.NULL, recipe, true);
+        } else {
+            getLogger().log(Level.INFO, "WildStacker is not enabled!");
+            spawnerPickaxe = new SpawnerPickaxe(itemGroup, spawnerPickaxeSlimefunItem, RecipeType.NULL, recipe, false);
+        }
+
+
         spawnerPickaxe.register(this);
     }
 
@@ -67,7 +78,8 @@ public class SpawnerPickaxeAddon extends JavaPlugin implements SlimefunAddon {
         return "https://github.com/jnsbndgz/spawner-pickaxe/issues";
     }
 
-    @Override @Nonnull
+    @Override
+    @Nonnull
     public JavaPlugin getJavaPlugin() {
         return this;
     }

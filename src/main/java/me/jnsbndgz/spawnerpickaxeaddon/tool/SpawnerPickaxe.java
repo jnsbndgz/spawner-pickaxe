@@ -1,10 +1,13 @@
 package me.jnsbndgz.spawnerpickaxeaddon.tool;
 
+import com.bgsoftware.wildstacker.api.WildStackerAPI;
+import com.bgsoftware.wildstacker.api.objects.StackedSpawner;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ToolUseHandler;
+import me.jnsbndgz.spawnerpickaxeaddon.SpawnerPickaxeAddon;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,9 +22,15 @@ import java.util.List;
 
 import static org.bukkit.Sound.ENTITY_ITEM_BREAK;
 
+/**
+ * Spawner Pickaxe, that can pick up spawners.
+ *
+ * @author jnsbndgz
+ */
 public class SpawnerPickaxe extends SlimefunItem {
 
-    public SpawnerPickaxe(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, Boolean isWildStacker) {
+    public SpawnerPickaxe(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
+                          boolean isWildStackerEnabled) {
         super(itemGroup, item, recipeType, recipe);
 
         addItemHandler(new ToolUseHandler() {
@@ -39,7 +48,7 @@ public class SpawnerPickaxe extends SlimefunItem {
                 Block block = blockBreakEvent.getBlock();
                 Player player = blockBreakEvent.getPlayer();
 
-                if(!isWildStacker) {
+                if(!isWildStackerEnabled) {
                     EntityType entityType = ((CreatureSpawner) block.getState()).getSpawnedType();
 
                     ItemStack spawner = new ItemStack(Material.SPAWNER, 1);
@@ -48,12 +57,23 @@ public class SpawnerPickaxe extends SlimefunItem {
 
                     creatureSpawner.setSpawnedType(entityType);
                     blockStateMeta.setBlockState(creatureSpawner);
-                    blockStateMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&d" + generateSpawnerName(entityType) + " Spawner"));
+                    blockStateMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+                            "&d" + generateSpawnerName(entityType) + " Spawner"));
                     spawner.setItemMeta(blockStateMeta);
 
                     consumeSpawnerPickaxe(player, itemStack);
                     block.breakNaturally();
                     block.getWorld().dropItemNaturally(block.getLocation(), spawner);
+                } else {
+                    CreatureSpawner creatureSpawner = (CreatureSpawner) block;
+
+                    StackedSpawner stackedSpawner = WildStackerAPI.getStackedSpawner(creatureSpawner);
+
+                    player.sendMessage("you broke a wildSpawner");
+
+                    consumeSpawnerPickaxe(player, itemStack);
+                    stackedSpawner.decreaseStackAmount(stackedSpawner.getStackAmount() - 1, true);
+                    block.getWorld().dropItemNaturally(block.getLocation(), stackedSpawner.getDropItem());
                 }
             }
         });
@@ -66,7 +86,7 @@ public class SpawnerPickaxe extends SlimefunItem {
 
     private String generateSpawnerName(EntityType entityType) {
         String origin = entityType.getKey().toString().split(":")[1].replace("_", " ");
-        StringBuilder sb = new StringBuilder("");
+        StringBuilder sb = new StringBuilder();
         String[] parts = origin.split(" ");
 
         for(String s : parts) {
