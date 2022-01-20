@@ -82,7 +82,7 @@ public class SpawnerPickaxe extends ItemStack implements Listener {
     }
 
     private boolean isSpawnerPickaxe(ItemStack item) {
-        if(item.getItemMeta() == null) {
+        if (item.getItemMeta() == null) {
             return false;
         }
 
