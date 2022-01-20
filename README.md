@@ -1,6 +1,6 @@
-# ⛏ Spawner Pickaxe Addon ️
+# ⛏ Spawner Pickaxe Plugin ️
 
-This Slimefun4 addon introduces a Spawner Pickaxe into the game that can pick up spawners. 
+This plugin introduces a Spawner Pickaxe into the game that can pick up spawners. 
 
 ## 📝 Requirements
 - WildStacker
