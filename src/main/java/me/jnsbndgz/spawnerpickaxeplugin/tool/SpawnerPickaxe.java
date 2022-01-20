@@ -82,6 +82,10 @@ public class SpawnerPickaxe extends ItemStack implements Listener {
     }
 
     private boolean isSpawnerPickaxe(ItemStack item) {
+        if(item.getItemMeta() == null) {
+            return false;
+        }
+
         PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
         byte key = pdc.getOrDefault(PICKAXE_KEY, PersistentDataType.BYTE, (byte) 0);
 
