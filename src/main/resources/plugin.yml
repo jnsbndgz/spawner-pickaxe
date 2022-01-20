@@ -1,14 +1,14 @@
 ## CHANGE this to the name of your plugin.
-name: SpawnerPickaxeAddon
+name: SpawnerPickaxePlugin
 
 ## CHANGE this to your username.
 author: jnsbndgz
 
 ## CHANGE this to a meaningful but short description of your plugin.
-description: A Slimefun4 addon that adds a Spawner Pickaxe.
+description: A plugin that implements a spawner pickaxe.
 
 ## CHANGE this to the path of the class that extends JavaPlugin.
-main: me.jnsbndgz.spawnerpickaxeaddon.SpawnerPickaxeAddon
+main: me.jnsbndgz.spawnerpickaxeplugin.SpawnerPickaxePlugin
 
 ## You can change this to link to your website or repository. You can also remove this line if you want to.
 website: https://github.com/jnsbndgz/spawner-pickaxe
@@ -18,14 +18,14 @@ website: https://github.com/jnsbndgz/spawner-pickaxe
 version: ${project.version}
 
 ## This is the minimum minecraft version required to run your plugin.
-api-version: 1.14
+api-version: 1.18
 
 ## This is required and marks Slimefun as a plugin dependency.
 depend:
-- Slimefun
+- WildStacker
 
 commands:
   spawnerpickaxe:
-    description: This command can be used to get a Spawner Pickaxe
+    description: This command can be used to retrive the Spawner Pickaxe
     usage: /spawnerpickaxe
     permission: spawnerpickaxe.givepickaxe

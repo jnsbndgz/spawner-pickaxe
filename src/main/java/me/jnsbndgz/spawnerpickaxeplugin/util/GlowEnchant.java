@@ -1,4 +1,4 @@
-package me.jnsbndgz.spawnerpickaxeaddon.Util;
+package me.jnsbndgz.spawnerpickaxeplugin.util;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;

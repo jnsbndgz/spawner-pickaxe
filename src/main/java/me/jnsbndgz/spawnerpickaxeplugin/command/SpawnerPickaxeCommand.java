@@ -1,6 +1,6 @@
-package me.jnsbndgz.spawnerpickaxeaddon.command;
+package me.jnsbndgz.spawnerpickaxeplugin.command;
 
-import me.jnsbndgz.spawnerpickaxeaddon.tool.SpawnerPickaxe;
+import me.jnsbndgz.spawnerpickaxeplugin.tool.SpawnerPickaxe;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,14 +16,12 @@ public class SpawnerPickaxeCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
         if (!(sender instanceof Player)) {
             return false;
         }
 
-        Player player = (Player) sender;
+        ((Player) sender).getInventory().addItem(spawnerPickaxe);
 
-        player.getInventory().addItem(spawnerPickaxe.getPickaxe());
         return true;
     }
 }

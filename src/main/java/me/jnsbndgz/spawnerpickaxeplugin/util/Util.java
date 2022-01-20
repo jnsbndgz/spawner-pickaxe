@@ -1,6 +1,6 @@
-package me.jnsbndgz.spawnerpickaxeaddon.Util;
+package me.jnsbndgz.spawnerpickaxeplugin.util;
 
-import me.jnsbndgz.spawnerpickaxeaddon.SpawnerPickaxeAddon;
+import me.jnsbndgz.spawnerpickaxeplugin.SpawnerPickaxePlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -22,7 +22,7 @@ public final class Util {
     public static List<String> color(List<String> texts) {
         List<String> list = new ArrayList<>();
 
-        for(String text : texts) {
+        for (String text : texts) {
             list.add(color(text));
         }
 
@@ -30,6 +30,6 @@ public final class Util {
     }
 
     public static Enchantment getGlowEnchant() {
-        return new GlowEnchant(new NamespacedKey(SpawnerPickaxeAddon.getInstance(), "glow_enchant"), new String[]{});
+        return new GlowEnchant(new NamespacedKey(SpawnerPickaxePlugin.getInstance(), "glow_enchant"), new String[]{});
     }
 }

@@ -1,10 +1,13 @@
-package me.jnsbndgz.spawnerpickaxeaddon.tool;
+package me.jnsbndgz.spawnerpickaxeplugin.tool;
 
 import com.bgsoftware.wildstacker.api.events.SpawnerUnstackEvent;
 import com.bgsoftware.wildstacker.api.objects.StackedSpawner;
-import me.jnsbndgz.spawnerpickaxeaddon.SpawnerPickaxeAddon;
-import me.jnsbndgz.spawnerpickaxeaddon.Util.Util;
-import org.bukkit.*;
+import me.jnsbndgz.spawnerpickaxeplugin.SpawnerPickaxePlugin;
+import me.jnsbndgz.spawnerpickaxeplugin.util.Util;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +15,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Arrays;
 
@@ -20,23 +25,23 @@ import java.util.Arrays;
  *
  * @author jnsbndgz
  */
-public class SpawnerPickaxe implements Listener {
+public class SpawnerPickaxe extends ItemStack implements Listener {
 
-    private ItemStack pickaxe;
+    private final NamespacedKey PICKAXE_KEY = new NamespacedKey(SpawnerPickaxePlugin.getInstance(), "SPAWNER_PICKAXE");
 
     public SpawnerPickaxe() {
+        super(Material.NETHERITE_PICKAXE);
 
-        pickaxe = new ItemStack(Material.NETHERITE_PICKAXE);
-
-        ItemMeta meta = pickaxe.getItemMeta();
+        ItemMeta meta = this.getItemMeta();
 
         meta.setDisplayName(Util.color("&b&lSpawner Pickaxe"));
         meta.setLore(Util.color(Arrays.asList("&7(One time use)", "", "&bBreak the spawner to get it.")));
         meta.addEnchant(Util.getGlowEnchant(), 1, true);
+        meta.getPersistentDataContainer().set(PICKAXE_KEY, PersistentDataType.BYTE, (byte) 1);
 
-        pickaxe.setItemMeta(meta);
+        this.setItemMeta(meta);
 
-        Bukkit.getPluginManager().registerEvents(this, SpawnerPickaxeAddon.getInstance());
+        Bukkit.getPluginManager().registerEvents(this, SpawnerPickaxePlugin.getInstance());
     }
 
     @EventHandler
@@ -45,7 +50,7 @@ public class SpawnerPickaxe implements Listener {
         Block block = e.getBlock();
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        if (!(block.getType() == Material.SPAWNER) && item.isSimilar(pickaxe)) {
+        if (!(block.getType() == Material.SPAWNER) && isSpawnerPickaxe(item)) {
             e.setCancelled(true);
             Util.sendMessage(player, "&7[&5&lSpawnerPickaxe&7] This pickaxe only breaks spawners!");
         }
@@ -58,23 +63,28 @@ public class SpawnerPickaxe implements Listener {
         }
 
         Player player = (Player) e.getUnstackSource();
-        StackedSpawner spawner = e.getSpawner();
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        if (!(item.isSimilar(pickaxe))) {
+        if (!isSpawnerPickaxe(item)) {
             return;
         }
+
+        StackedSpawner spawner = e.getSpawner();
 
         consumeSpawnerPickaxe(player, item);
         spawner.getWorld().dropItemNaturally(spawner.getLocation(), spawner.getDropItem(1));
     }
 
     private void consumeSpawnerPickaxe(Player player, ItemStack itemStack) {
+        Util.sendMessage(player, "&7[&5&lSpawnerPickaxe&7] You have successfully broke a spawner!");
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1F, 1F);
         player.getInventory().removeItem(itemStack);
     }
 
-    public ItemStack getPickaxe() {
-        return pickaxe;
+    private boolean isSpawnerPickaxe(ItemStack item) {
+        PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
+        byte key = pdc.getOrDefault(PICKAXE_KEY, PersistentDataType.BYTE, (byte) 0);
+
+        return key == 1;
     }
 }

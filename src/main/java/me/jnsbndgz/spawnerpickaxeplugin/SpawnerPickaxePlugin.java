@@ -1,14 +1,14 @@
-package me.jnsbndgz.spawnerpickaxeaddon;
+package me.jnsbndgz.spawnerpickaxeplugin;
 
-import me.jnsbndgz.spawnerpickaxeaddon.command.SpawnerPickaxeCommand;
-import me.jnsbndgz.spawnerpickaxeaddon.tool.SpawnerPickaxe;
+import me.jnsbndgz.spawnerpickaxeplugin.command.SpawnerPickaxeCommand;
+import me.jnsbndgz.spawnerpickaxeplugin.tool.SpawnerPickaxe;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class SpawnerPickaxeAddon extends JavaPlugin {
+public class SpawnerPickaxePlugin extends JavaPlugin {
 
-    private static SpawnerPickaxeAddon instance;
+    private static SpawnerPickaxePlugin instance;
 
-    public static SpawnerPickaxeAddon getInstance() {
+    public static SpawnerPickaxePlugin getInstance() {
         return instance;
     }
 
