@@ -23,3 +23,9 @@ api-version: 1.14
 ## This is required and marks Slimefun as a plugin dependency.
 depend:
 - Slimefun
+
+commands:
+  spawnerpickaxe:
+    description: This command can be used to get a Spawner Pickaxe
+    usage: /spawnerpickaxe
+    permission: spawnerpickaxe.givepickaxe

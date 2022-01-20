@@ -1,16 +1,13 @@
 package me.jnsbndgz.spawnerpickaxeaddon.Util;
 
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -70,15 +67,7 @@ public class GlowEnchant extends Enchantment {
 
     @Override
     public boolean canEnchantItem(ItemStack item) {
-        if (item.hasItemMeta()) {
-            final ItemMeta itemMeta = item.getItemMeta();
-            final Optional<String> id = Slimefun.getItemDataService().getItemData(itemMeta);
-
-            if (id.isPresent()) {
-                return ids.contains(id.get());
-            }
-        }
-        return false;
+        return true;
     }
 
 }
